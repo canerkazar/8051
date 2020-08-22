@@ -1,0 +1,3 @@
+".\Objects\main.obj" 
+TO ".\Objects\nabiz_sensoru" 
+PRINT(".\Listings\nabiz_sensoru.m51") RAMSIZE(256) 

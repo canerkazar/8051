@@ -1,0 +1,79 @@
+C51 COMPILER V9.59.0.0   MAIN                                                              01/06/2019 04:42:10 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Users\CANER\Desktop\buse\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRIN
+                    -T(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          
+   2          #include<reg51.h>
+   3          #include<lcd.h> 
+*** WARNING C318 IN LINE 3 OF main.c: can't open file 'lcd.h'
+   4          // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+   5          // -=-=-=-=- Hardware Defines -=-=-=-=-=-=-=
+   6          // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+   7          sbit SENSOR = P1^0; //sensor is connected to this pin
+   8          unsigned int beatms;
+   9          float bpm;
+  10          char buf[20];
+  11          // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  12          // -=-=-=-=- Main Program -=-=-=-=-=-=-=
+  13          // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  14          void main()
+  15          {
+  16   1      // -=-=- Intialize variables -=-=-=
+  17   1      lcdInit();
+*** WARNING C206 IN LINE 17 OF main.c: 'lcdInit': missing function-prototype
+  18   1      // -=-=- Welcome LCD Message -=-=-=
+  19   1      lcdClear();
+*** WARNING C206 IN LINE 19 OF main.c: 'lcdClear': missing function-prototype
+  20   1      lcdGotoXY(0,0); // 1st Line of LCD
+*** WARNING C206 IN LINE 20 OF main.c: 'lcdGotoXY': missing function-prototype
+*** ERROR C267 IN LINE 20 OF main.c: 'lcdGotoXY': requires ANSI-style prototype
+  21   1      // "xxxxxxxxxxxxxxxx"
+  22   1      lcdPrint("DIGITAL HEART");
+  23   1      lcdGotoXY(0,1); // 2nd Line of LCD
+  24   1      // "xxxxxxxxxxxxxxxx"
+  25   1      lcdPrint("BEAT MONITOR");
+  26   1      beatms=0; // will store duration between two pulses
+  27   1      // -=-=- Program Loop -=-=-=
+  28   1      while(1)
+  29   1      {
+  30   2      while(SENSOR==0);// wait for high pulse from sensor
+  31   2      DelayNmS(10); // 10ms delay so that it does not listen to any noise
+  32   2      beatms = 10; // start counting beatms from 10ms since we have delay after pulse
+  33   2      while(SENSOR==1)// wait until signal is high
+  34   2      {
+  35   3      DelayNmS(1); //wait 1msec
+  36   3      beatms++; //keep incrementing counter each 1ms
+  37   3      }
+  38   2      while(SENSOR==0) //keep looping till signal goes back high, wait for next
+  39   2      {
+  40   3      DelayNmS(1); //wait 1msec
+  41   3      beatms++; //keep incrementing counter each 1ms
+  42   3      }
+  43   2      // beatms variable will now have time in ms between two high edge pulse
+  44   2      lcdClear();
+  45   2      lcdGotoXY(0,0);
+  46   2      lcdPrint("HEART RATE : ");
+  47   2      bpm = (float)60000/beatms; // see document of #1157 for this calculation
+  48   2      if(bpm > 200)
+  49   2      {
+C51 COMPILER V9.59.0.0   MAIN                                                              01/06/2019 04:42:10 PAGE 2   
+
+  50   3      lcdGotoXY(0,1);
+  51   3      sprintf (buf, "Processing......"); // Invalid, Wait for next cycle
+  52   3      lcdPrint(buf);
+  53   3      } else {
+  54   3      lcdGotoXY(0,1);
+  55   3      sprintf (buf, "%0.0f BPM", bpm); // Display reading in BPM
+  56   3      lcdPrint(buf);
+  57   3      }
+  58   2      }
+  59   1      }
+  60           
+
+C51 COMPILATION COMPLETE.  4 WARNING(S),  1 ERROR(S)
